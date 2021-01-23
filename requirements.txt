@@ -3,3 +3,8 @@ Flask
 requests
 line-bot-sdk
 python-dotenv
+alembic
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Script
+PyMySQL
