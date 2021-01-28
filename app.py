@@ -1,4 +1,5 @@
 from flask import Flask, request, abort
+from flask_sqlalchemy import SQLAlchemy
 from config import Config as config
 from messages.flex import flex
 from helper import helper
@@ -31,11 +32,19 @@ from linebot.models import (
     SeparatorComponent, QuickReply, QuickReplyButton,
     ImageSendMessage)
 
+from models import connection
+
 # start web server
 app = Flask(__name__)
 
 # specify db config
 app.config.from_object(config())
+
+# Init database connection
+db = connection.setConnection(app)
+
+# Import models which share the same connection
+from models.Company import Company
 
 # specify path
 project_folder = os.path.dirname(os.path.abspath(__file__))
@@ -89,12 +98,10 @@ def handle_text_message(event):
 
     if text == 'Quick' or text == 'quick':
         text_message = TextSendMessage(
-            text='Hi, 我是Aaron, 感謝你的加入!\n請點擊選單取得更多資訊\n輸入"Quick"可以再次開啟快速回覆列表',
+            text='Hi, 我是上耀, 感謝你的加入!\n請點擊選單取得更多資訊\n輸入"Quick"可以再次開啟快速回覆列表',
             quick_reply=QuickReply(items=[
                 QuickReplyButton(action=MessageAction(
-                    label='關於我', text='About me')),
-                QuickReplyButton(action=MessageAction(
-                    label='我的社群帳號', text='Social Networks'))
+                    label='關於我', text='About me'))
         ]))
 
         line_bot_api.reply_message(
@@ -109,14 +116,10 @@ def handle_text_message(event):
             event.reply_token,
             message
         )
-    elif text == 'Leadership':
-        flexObj = flex("leadership")
-        message = FlexSendMessage(
-            alt_text="leadership", contents=flexObj.readFile())
+    elif text == 'company':
+        company = Company.find(1)
         line_bot_api.reply_message(
-            event.reply_token,
-            message
-        )
+            event.reply_token, TextSendMessage(text='公司名稱:'+company.name))
     elif text == 'Side Projects':
         flexObj = flex("side_projects")
         message = FlexSendMessage(

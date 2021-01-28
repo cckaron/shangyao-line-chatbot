@@ -1,45 +1,39 @@
 import os
 from dotenv import load_dotenv
 
-isOnHeroku = False
-# Check whether it's in heroku env
-if os.environ.get('CLEARDB_DATABASE_URL') != None:
-    isOnHeroku = True
-else:
-    # load .env config
-    project_folder = os.path.dirname(os.path.abspath(__file__))
-    load_dotenv(os.path.join(project_folder, '.dev.env'))
+# Check mode
+mode = os.environ.get('MODE')
 
 class Config:
-    if isOnHeroku:
-        #Base flask
+    if mode == 'PROD':
+        # Load config vars in Cloud server
+        
+        # Base flask
         DEBUG = os.environ.get('DEBUG')
         HOST = os.environ.get('HOST')
         PORT = os.environ.get('PORT')
         
-        #DB
-        DB_SERVER = os.environ.get('CLEARDB_DATABASE_URL')
-        DB_PORT = os.environ.get('CLEARDB_DATABASE_URL')
-        DB_NAME = os.environ.get('CLEARDB_DATABASE_NAME')
-        DB_USER = os.environ.get('CLEARDB_DATABASE_USER')
-        DB_PASSWORD = os.environ.get('CLEARDB_DATABASE_PASSWORD')
+        # DB
+        SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
+        SQLALCHEMY_TRACK_MODIFICATIONS = os.environment.get('SQLALCHEMY_TRACK_MODIFICATIONS')
 
-        #line bot
+        # Line bot
         LINE_CHANNEL_SECRET = os.environ.get('LINE_CHANNEL_SECRET')
         LINE_CHANNEL_ACCESS_TOKEN = os.environ.get('LINE_CHANNEL_ACCESS_TOKEN')
+        
     else:
-        #Base flask
+        # Load .env config file
+        load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), '.dev.env'))
+
+        # Base flask
         DEBUG = os.getenv('DEBUG')
         HOST = os.getenv('HOST')
         PORT = os.getenv('PORT')
         
-        #DB
-        DB_SERVER = os.getenv('DB_SERVER')
-        DB_PORT = os.getenv('DB_PORT')
-        DB_NAME = os.getenv('DB_NAME')
-        DB_USER = os.getenv('DB_USER')
-        DB_PASSWORD = os.getenv('DB_PASSWORD')
+        # DB
+        SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
+        SQLALCHEMY_TRACK_MODIFICATIONS = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS')
 
-        #line bot
+        # Line bot
         LINE_CHANNEL_SECRET = os.getenv('LINE_CHANNEL_SECRET')
         LINE_CHANNEL_ACCESS_TOKEN = os.getenv('LINE_CHANNEL_ACCESS_TOKEN')
