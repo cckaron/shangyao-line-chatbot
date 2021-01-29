@@ -7,17 +7,19 @@ class Company(db.Model):
     __tablename__ = 'companies'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(length=128), nullable=False)
+    name = db.Column(db.String(length=64), nullable=False)
     phone = db.Column(db.String(length=16), nullable=False)
     tax = db.Column(db.String(length=16), nullable=False)
+    address = db.Column(db.String(length=128), nullable=False)
     created_at = db.Column(db.DateTime(), nullable=False)
     updated_at = db.Column(db.DateTime(), nullable=False)
 
-    def __init__(self, id, name, phone, tax, created_at, updated_at):
+    def __init__(self, id, name, phone, tax, address, created_at, updated_at):
         self.id = id
         self.name = name
         self.phone = phone
         self.tax = tax
+        self.address = address
         self.created_at = created_at
         self.updated_at = updated_at
     
