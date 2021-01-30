@@ -1,4 +1,4 @@
-from flask import Flask, request, abort
+from flask import Flask, request, abort, send_file
 from flask_sqlalchemy import SQLAlchemy
 from config import Config as config
 from messages.flex import flex
@@ -35,7 +35,7 @@ from linebot.models import (
 from models import connection
 
 # start web server
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../client/dist/static')
 
 # specify db config
 app.config.from_object(config())
@@ -68,6 +68,11 @@ helper = helper(line_bot_api)
 # Create rich menu at the first time
 # helper.flushAllRichMenuThenCreateOne()
 
+@app.route('/')
+def index_client():
+    dist_dir = config.DIST_DIR
+    entry = os.path.join(dist_dir, 'index.html')
+    return send_file(entry)
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -188,4 +193,4 @@ def handle_join(event):
     )
 
 if __name__ == '__main__':
-    app.run(host=config.HOST, port=config.PORT, debug=True)
+    app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG)
