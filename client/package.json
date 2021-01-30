@@ -13,7 +13,7 @@
     "lint": "eslint --ext .js,.vue src",
     "test:unit": "jest --clearCache && vue-cli-service test:unit",
     "test:ci": "npm run lint && npm run test:unit",
-    "postinstall": "yarn build:prod"
+    "postinstall": "yarn build:prod && NODE_ENV=production"
   },
   "dependencies": {
     "axios": "0.18.1",
@@ -58,7 +58,8 @@
   ],
   "engines": {
     "node": ">=8.9",
-    "npm": ">= 3.0.0"
+    "npm": ">= 3.0.0",
+    "yarn": ">= 1.22.10"
   },
   "license": "MIT"
 }

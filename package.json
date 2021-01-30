@@ -2,7 +2,13 @@
     "name": "heroku-shangyao",
     "version": "0.1.0",
     "scripts": {
-        "start": "gunicorn app:app --log-file -",
-        "build": "cd client && yarn build:prod"
-      }
+        "start": "cd server && gunicorn app:app --log-file - && cd ..",
+        "postinstall": "cd client && NODE_ENV=development && yarn install"
+      },
+    "engines": {
+    "node": ">=8.9",
+    "npm": ">= 3.0.0",
+    "yarn": ">= 1.22.10"
+  },
+  "license": "MIT"
 }
