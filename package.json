@@ -1,0 +1,8 @@
+{
+    "name": "heroku-shangyao",
+    "version": "0.1.0",
+    "scripts": {
+        "start": "gunicorn app:app --log-file -",
+        "build": "cd client && yarn build:prod"
+      }
+}

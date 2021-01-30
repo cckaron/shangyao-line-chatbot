@@ -5,6 +5,13 @@ from dotenv import load_dotenv
 mode = os.environ.get('MODE')
 
 class Config:
+    # Fetch project paths
+    APP_DIR = os.path.dirname(__file__)
+    ROOT_DIR = os.path.dirname(APP_DIR)
+    CLIENT_DIR = os.path.join(ROOT_DIR, 'client')
+    DIST_DIR = os.path.join(CLIENT_DIR, 'dist')
+
+    # Check mode
     if mode == 'PROD':
         # Load config vars in Cloud server
         
@@ -15,7 +22,7 @@ class Config:
         
         # DB
         SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
-        SQLALCHEMY_TRACK_MODIFICATIONS = os.environment.get('SQLALCHEMY_TRACK_MODIFICATIONS')
+        SQLALCHEMY_TRACK_MODIFICATIONS = os.environ.get('SQLALCHEMY_TRACK_MODIFICATIONS')
 
         # Line bot
         LINE_CHANNEL_SECRET = os.environ.get('LINE_CHANNEL_SECRET')

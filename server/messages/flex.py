@@ -1,5 +1,6 @@
 import os
 import json
+
 project_folder = os.path.dirname(os.path.abspath(__file__))
 
 class flex:
