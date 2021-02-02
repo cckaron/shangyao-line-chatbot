@@ -1,8 +1,10 @@
-from flask import Flask, request, abort, send_file
+from flask import Flask, request, abort, send_file, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from config import Config as config
 from messages.flex import flex
 from helper import helper
+from api.route import api
+
 import sys
 import tempfile
 import json
@@ -65,14 +67,12 @@ handler = WebhookHandler(channel_secret)
 # init helper
 helper = helper(line_bot_api)
 
+# register api
+app.register_blueprint(api)
+
+
 # Create rich menu at the first time
 # helper.flushAllRichMenuThenCreateOne()
-
-@app.route('/')
-def index_client():
-    dist_dir = config.DIST_DIR
-    entry = os.path.join(dist_dir, 'index.html')
-    return send_file(entry)
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -107,11 +107,11 @@ def handle_text_message(event):
             quick_reply=QuickReply(items=[
                 QuickReplyButton(action=MessageAction(
                     label='關於我', text='About me'))
-        ]))
+            ]))
 
         line_bot_api.reply_message(
-                event.reply_token,
-                text_message
+            event.reply_token,
+            text_message
         )
     elif text == 'About me':
         flexObj = flex("about_me")
@@ -124,7 +124,7 @@ def handle_text_message(event):
     elif text == 'company':
         company = Company.find(1)
         line_bot_api.reply_message(
-            event.reply_token, TextSendMessage(text='公司名稱:'+company.name))
+            event.reply_token, TextSendMessage(text='公司名稱:' + company.name))
     elif text == 'Side Projects':
         flexObj = flex("side_projects")
         message = FlexSendMessage(
@@ -175,6 +175,7 @@ def handle_postback(event):
     data = event.postback.data
     label = event.postback.label
 
+
 @handler.add(FollowEvent)
 def handle_join(event):
     print("follow")
@@ -185,12 +186,23 @@ def handle_join(event):
                 label='關於我', text='About me')),
             QuickReplyButton(action=MessageAction(
                 label='我的社群帳號', text='Social Networks'))
-    ]))
+        ]))
 
     line_bot_api.reply_message(
-                event.reply_token,
-                text_message
+        event.reply_token,
+        text_message
     )
+
+
+@app.route('/', defaults={'path': ''})
+@app.route("/<string:path>")
+@app.route('/<path:path>')
+def index_client(path):
+    dist_dir = config.DIST_DIR
+    entry = os.path.join(dist_dir, 'index.html')
+    print(path)
+    return send_file(entry)
+
 
 if __name__ == '__main__':
     app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG)
