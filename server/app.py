@@ -1,9 +1,10 @@
-from flask import Flask, request, abort, send_file, Blueprint
+from flask import Flask, request, abort, send_file, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from config import Config as config
 from messages.flex import flex
 from helper import helper
-from api.route import api
+from api.user import user
+from flask_jwt_extended import JWTManager, jwt_required
 
 import sys
 import tempfile
@@ -67,8 +68,13 @@ handler = WebhookHandler(channel_secret)
 # init helper
 helper = helper(line_bot_api)
 
+# init jwt
+jwt = JWTManager()
+app.config['JWT_SECRET_KEY'] = 'shang-yao'
+jwt.init_app(app)
+
 # register api
-app.register_blueprint(api)
+app.register_blueprint(user)
 
 
 # Create rich menu at the first time
@@ -194,6 +200,16 @@ def handle_join(event):
     )
 
 
+@jwt.expired_token_loader
+def my_expired_token_callback():
+    return jsonify({
+        'status': 401,
+        'sub_status': 42,
+        'msg': 'The token has expired'
+    }), 401
+
+
+@jwt_required
 @app.route('/', defaults={'path': ''})
 @app.route("/<string:path>")
 @app.route('/<path:path>')
