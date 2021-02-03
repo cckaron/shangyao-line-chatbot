@@ -20,16 +20,16 @@ depends_on = None
 
 def upgrade():
     op.create_table('product',
-    sa.Column('id', sa.Integer, primary_key=True),
-    sa.Column('vendor_id', sa.Integer, sa.ForeignKey('vendor.id')),
-    sa.Column('name', sa.String(length=128), nullable=False),
-    sa.Column('number', sa.Integer, nullable=False),
-    sa.Column('unit', sa.String(length=16), nullable=True),
-    sa.Column('source', sa.Enum(source), nullable=False),
-    sa.Column('status', sa.Enum(status), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), nullable=False),
-    )
+                    sa.Column('id', sa.Integer, primary_key=True),
+                    sa.Column('vendor_id', sa.Integer, sa.ForeignKey('vendor.id')),
+                    sa.Column('name', sa.String(length=128), nullable=False),
+                    sa.Column('number', sa.Integer, nullable=False),
+                    sa.Column('unit', sa.String(length=16), nullable=True),
+                    sa.Column('source', sa.Enum(source), nullable=False),
+                    sa.Column('status', sa.Enum(status), nullable=False),
+                    sa.Column('created_at', sa.DateTime(), nullable=False),
+                    sa.Column('updated_at', sa.DateTime(), nullable=False),
+                    )
 
 
 def downgrade():

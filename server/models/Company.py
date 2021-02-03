@@ -1,11 +1,10 @@
-from . import connection
+from server.models import connection
 from sqlalchemy import or_, desc
 
 db = connection.getConnection()
 
-class Company(db.Model):
-    __tablename__ = 'companies'
 
+class Company(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(length=64), nullable=False)
     phone = db.Column(db.String(length=16), nullable=False)
@@ -22,22 +21,21 @@ class Company(db.Model):
         self.address = address
         self.created_at = created_at
         self.updated_at = updated_at
-    
+
     def add(self):
         s = db.session()
         s.expire_on_commit = False
         db.session.add(self)
-        
+
         try:
             db.session.commit()
             return self
         except:
             db.session.rollback()
-            raise 
+            raise
         finally:
             db.session.close()
-    
-    
+
     @classmethod
     def find(cls, company_id):
         try:
@@ -45,10 +43,10 @@ class Company(db.Model):
             return rtn
         except:
             db.session.rollback()
-            raise 
+            raise
         finally:
             db.session.close()
-    
+
     @classmethod
     def findall(cls):
         try:
@@ -56,6 +54,6 @@ class Company(db.Model):
             return rtn
         except:
             db.session.rollback()
-            raise 
+            raise
         finally:
             db.session.close()
