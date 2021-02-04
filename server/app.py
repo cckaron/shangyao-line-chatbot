@@ -70,7 +70,7 @@ jwt.init_app(app)
 app.register_blueprint(user)
 
 # Flush table
-db.session.query(Company).delete()
+# db.session.query(Company).delete()
 db.session.query(Product).delete()
 db.session.query(Vendor).delete()
 db.session.commit()
@@ -131,6 +131,15 @@ def handle_text_message(event):
         company = Company.find(1)
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text='公司名稱:' + company.name))
+    elif text == '商品列表':
+        products = Product.findall()
+        rtn_text = ""
+        for product in products:
+            vendor = Vendor.find(product.vendor_id)
+            vendor_name = vendor.name
+            rtn_text += "商品編號:{}, 商品名稱:{}, 廠商名稱:{}\n".format(product.id, product.name, vendor_name)
+        line_bot_api.reply_message(
+            event.reply_token, TextSendMessage(rtn_text))
     elif text == 'Side Projects':
         flexObj = flex("side_projects")
         message = FlexSendMessage(

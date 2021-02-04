@@ -1,3 +1,7 @@
+from venv import logger
+
+from sqlalchemy.exc import SQLAlchemyError
+
 from server.models import connection
 from sqlalchemy import or_, desc
 from datetime import datetime
@@ -53,7 +57,8 @@ class Company(db.Model):
         try:
             rtn = cls.query.all()
             return rtn
-        except:
+        except SQLAlchemyError as e:
+            logger.error(e.args)
             db.session.rollback()
             raise
         finally:
