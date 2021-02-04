@@ -71,6 +71,8 @@ app.register_blueprint(user)
 
 # Flush table
 db.session.query(Company).delete()
+db.session.query(Product).delete()
+db.session.query(Vendor).delete()
 db.session.commit()
 xlsx.read_and_seed(db)
 
