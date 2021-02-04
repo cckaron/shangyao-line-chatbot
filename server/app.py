@@ -135,6 +135,7 @@ def handle_text_message(event):
         products = Product.findall()
         rtn_text = ""
         for product in products:
+            print(f'商品ID:{product.id}')
             vendor = Vendor.find(product.vendor_id)
             vendor_name = vendor.name
             rtn_text += "商品編號:{}, 商品名稱:{}, 廠商名稱:{}\n".format(product.id, product.name, vendor_name)

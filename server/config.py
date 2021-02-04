@@ -24,6 +24,7 @@ class Config:
         # DB
         SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
         SQLALCHEMY_TRACK_MODIFICATIONS = os.environ.get('SQLALCHEMY_TRACK_MODIFICATIONS')
+        SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
 
         # Line bot
         LINE_CHANNEL_SECRET = os.environ.get('LINE_CHANNEL_SECRET')
@@ -41,6 +42,7 @@ class Config:
         # DB
         SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
         SQLALCHEMY_TRACK_MODIFICATIONS = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS')
+        SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
 
         # Line bot
         LINE_CHANNEL_SECRET = os.getenv('LINE_CHANNEL_SECRET')
