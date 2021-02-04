@@ -12,6 +12,7 @@ from server.helper import chatbot
 from server.api.user import user
 from server.models import connection
 
+
 # Import line api
 from linebot import (
     LineBotApi, WebhookHandler
@@ -33,10 +34,13 @@ app = Flask(__name__, static_folder='../client/dist/static')
 app.config.from_object(Config)
 
 # Init database connection
-db = connection.setConnection(app)
+db = connection.set_connection(app)
 
 # Import models which share the same connection
 from server.models.Company import Company
+from server.models.Vendor import Vendor
+from server.models.Product import Product
+from server.helper import xlsx
 
 # specify path
 project_folder = os.path.dirname(os.path.abspath(__file__))
@@ -68,6 +72,7 @@ app.register_blueprint(user)
 # Flush table
 db.session.query(Company).delete()
 db.session.commit()
+xlsx.read_and_seed(db)
 
 
 # Create rich menu at the first time

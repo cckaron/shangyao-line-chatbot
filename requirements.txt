@@ -9,3 +9,5 @@ Flask-Migrate
 Flask-Script
 PyMySQL
 flask-jwt-extended
+pandas
+openpyxl

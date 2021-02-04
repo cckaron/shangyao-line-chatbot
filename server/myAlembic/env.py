@@ -1,9 +1,14 @@
 from logging.config import fileConfig
 
+from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from alembic import context
+import sys
+
+# This will add the parent directory of myAlembic/ to PYTHONPATH so that it can find the models module.
+# Ref:https://stackoverflow.com/questions/57468141/alembic-modulenotfounderror-in-env-py
+sys.path = ['', '..'] + sys.path[1:]
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

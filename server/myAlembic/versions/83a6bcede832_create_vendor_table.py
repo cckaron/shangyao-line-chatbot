@@ -24,7 +24,7 @@ def upgrade():
                     sa.Column('company_address', sa.String(length=16), nullable=True),
                     sa.Column('shipping_address', sa.String(length=16), nullable=True),
                     sa.Column('created_at', sa.DateTime(), nullable=False),
-                    sa.Column('updated_at', sa.DateTime(), nullable=False),
+                    sa.Column('updated_at', sa.DateTime(), nullable=False)
                     )
 
 

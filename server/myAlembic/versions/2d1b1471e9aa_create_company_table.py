@@ -24,7 +24,7 @@ def upgrade():
                     sa.Column('tax', sa.String(length=16), nullable=True),
                     sa.Column('address', sa.String(length=16), nullable=True),
                     sa.Column('created_at', sa.DateTime(), nullable=False),
-                    sa.Column('updated_at', sa.DateTime(), nullable=False),
+                    sa.Column('updated_at', sa.DateTime(), nullable=False)
                     )
 
     # insert data

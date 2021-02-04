@@ -7,6 +7,7 @@ mode = os.environ.get('MODE')
 class Config:
     # Fetch project paths
     APP_DIR = os.path.dirname(__file__)
+    ASSETS_DIR = os.path.join(APP_DIR, "assets")
     ROOT_DIR = os.path.dirname(APP_DIR)
     CLIENT_DIR = os.path.join(ROOT_DIR, 'client')
     DIST_DIR = os.path.join(CLIENT_DIR, 'dist')
