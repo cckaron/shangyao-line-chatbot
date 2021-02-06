@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Currency Exchange</title>
+</head>
+
+<body>
+    <form action="">
+        <label for="">請輸入台幣數量</label>
+        <input id="twd-input" name="twd-input" type="text">
+        <button id="submit-btn">換成美金</button>
+    </form>
+    <hr>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <script>
+        function initializeLiff(myLiffId) {
+            liff
+                .init({
+                    liffId: myLiffId
+                })
+                .then(() => {
+                    // start to use LIFF's api
+                    initializeApp();
+                })
+                .catch((err) => {
+                });
+        }
+
+        initializeLiff('LIFF_ID');
+
+        function postData(url, data) {
+            return fetch(url, {
+                body: JSON.stringify(data),
+                cache: 'no-cache',
+                headers: {
+                    'user-agent': 'Mozilla/4.0 MDN Example',
+                    'content-type': 'application/json'
+                },
+                method: 'POST',
+                mode: 'cors',
+            })
+                .then(response => response.json()) // 輸出成 json
+        }
+
+        document.getElementById('submit-btn').addEventListener('click', function () {
+            if (!liff.isInClient()) {
+                sendAlertIfNotInClient();
+            } else {
+                const twdInput = parseInt(document.getElementById('twd-input').value);
+                postData('https://endipoint_url/currency_exchange', { twd: twdInput })
+                    .then(data => {
+                        liff.sendMessages([{
+                            'type': 'text',
+                            'text': "你有這麼多美金：" + data['result']
+                        }]).then(function () {
+                            window.alert('Message sent');
+                        }).catch(function (error) {
+                            window.alert('Error sending message: ' + error);
+                        });
+                        liff.closeWindow();
+                    }) // JSON from `response.json()` call
+                    .catch(error => alert(error))
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -10,6 +10,7 @@ from server.config import Config
 from server.messages.flex import flex
 from server.helper import chatbot
 from server.api.user import user
+from server.api.liff import liff
 from server.models import connection
 
 
@@ -68,13 +69,14 @@ jwt.init_app(app)
 
 # Register api
 app.register_blueprint(user)
+app.register_blueprint(liff)
 
 # Flush table
 # db.session.query(Company).delete()
-db.session.query(Product).delete()
-db.session.query(Vendor).delete()
-db.session.commit()
-xlsx.read_and_seed(db)
+# db.session.query(Product).delete()
+# db.session.query(Vendor).delete()
+# db.session.commit()
+# xlsx.read_and_seed(db)
 
 
 # Create rich menu at the first time
@@ -219,15 +221,15 @@ def my_expired_token_callback():
     }), 401
 
 
-@jwt_required
-@app.route('/', defaults={'path': ''})
-@app.route("/<string:path>")
-@app.route('/<path:path>')
-def index_client(path):
-    dist_dir = Config.DIST_DIR
-    entry = os.path.join(dist_dir, 'index.html')
-    print(path)
-    return send_file(entry)
+# @jwt_required
+# @app.route('/', defaults={'path': ''})
+# @app.route("/<string:path>")
+# @app.route('/<path:path>')
+# def index_client(path):
+#     dist_dir = Config.DIST_DIR
+#     entry = os.path.join(dist_dir, 'index.html')
+#     print(path)
+#     return send_file(entry)
 
 
 if __name__ == '__main__':
