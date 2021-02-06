@@ -1,17 +1,19 @@
+# Import basic module
 from flask import Flask, request, abort, send_file, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from config import Config as config
-from messages.flex import flex
-from helper import helper
-from api.user import user
 from flask_jwt_extended import JWTManager, jwt_required
 
 import sys
-import tempfile
-import json
 import os
 
-# line api
+# Import custom module
+from server.config import Config
+from server.messages.flex import flex
+from server.helper import chatbot
+from server.api.user import user
+from server.models import connection
+
+
+# Import line api
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -20,65 +22,63 @@ from linebot.exceptions import (
 )
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
-    SourceUser, SourceGroup, SourceRoom,
-    TemplateSendMessage, ConfirmTemplate, MessageAction,
-    ButtonsTemplate, ImageCarouselTemplate, ImageCarouselColumn, URIAction,
-    PostbackAction, DatetimePickerAction,
-    CameraAction, CameraRollAction, LocationAction,
-    CarouselTemplate, CarouselColumn, PostbackEvent,
-    StickerMessage, StickerSendMessage, LocationMessage, LocationSendMessage,
-    ImageMessage, VideoMessage, AudioMessage, FileMessage,
-    UnfollowEvent, FollowEvent, JoinEvent, LeaveEvent, BeaconEvent,
-    MemberJoinedEvent, MemberLeftEvent,
-    FlexSendMessage, BubbleContainer, ImageComponent, BoxComponent,
-    TextComponent, IconComponent, ButtonComponent,
-    SeparatorComponent, QuickReply, QuickReplyButton,
-    ImageSendMessage)
+    MessageAction,
+    PostbackEvent,
+    FollowEvent, FlexSendMessage, QuickReply, QuickReplyButton)
 
-from models import connection
 
 # start web server
 app = Flask(__name__, static_folder='../client/dist/static')
 
 # specify db config
-app.config.from_object(config())
+app.config.from_object(Config)
 
 # Init database connection
-db = connection.setConnection(app)
+db = connection.set_connection(app)
 
 # Import models which share the same connection
-from models.Company import Company
+from server.models.Company import Company
+from server.models.Vendor import Vendor
+from server.models.Product import Product
+from server.helper import xlsx
 
 # specify path
 project_folder = os.path.dirname(os.path.abspath(__file__))
 
 # get line channel config
-channel_secret = config.LINE_CHANNEL_SECRET
-channel_access_token = config.LINE_CHANNEL_ACCESS_TOKEN
+channel_secret = Config.LINE_CHANNEL_SECRET
+channel_access_token = Config.LINE_CHANNEL_ACCESS_TOKEN
 
 # Confirm configs
 if channel_secret is None or channel_access_token is None:
     print('Specify LINE_CHANNEL_SECRET and LINE_CHANNEL_ACCESS_TOKEN as environment variables.')
     sys.exit(1)
 
-# chatbot init
+# Initialize chat bot
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
-# init helper
-helper = helper(line_bot_api)
+# Initialize chat bot richMenu
+richMenu = chatbot.richMenu(line_bot_api)
 
-# init jwt
+# Initialize jwt
 jwt = JWTManager()
 app.config['JWT_SECRET_KEY'] = 'shang-yao'
 jwt.init_app(app)
 
-# register api
+# Register api
 app.register_blueprint(user)
+
+# Flush table
+# db.session.query(Company).delete()
+db.session.query(Product).delete()
+db.session.query(Vendor).delete()
+db.session.commit()
+xlsx.read_and_seed(db)
 
 
 # Create rich menu at the first time
-# helper.flushAllRichMenuThenCreateOne()
+# richMenu.flushAllRichMenuThenCreateOne()
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -131,6 +131,16 @@ def handle_text_message(event):
         company = Company.find(1)
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text='公司名稱:' + company.name))
+    elif text == '商品列表':
+        products = Product.findall()
+        rtn_text = ""
+        for product in products:
+            print(f'商品ID:{product.id}')
+            vendor = Vendor.find(product.vendor_id)
+            vendor_name = vendor.name
+            rtn_text += "商品編號:{}, 商品名稱:{}, 廠商名稱:{}\n".format(product.id, product.name, vendor_name)
+        line_bot_api.reply_message(
+            event.reply_token, TextSendMessage(rtn_text))
     elif text == 'Side Projects':
         flexObj = flex("side_projects")
         message = FlexSendMessage(
@@ -214,11 +224,11 @@ def my_expired_token_callback():
 @app.route("/<string:path>")
 @app.route('/<path:path>')
 def index_client(path):
-    dist_dir = config.DIST_DIR
+    dist_dir = Config.DIST_DIR
     entry = os.path.join(dist_dir, 'index.html')
     print(path)
     return send_file(entry)
 
 
 if __name__ == '__main__':
-    app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG)
+    app.run(host=Config.HOST, port=Config.PORT, debug=Config.DEBUG)

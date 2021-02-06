@@ -9,7 +9,7 @@ from linebot.models import RichMenu, RichMenuSize, RichMenuArea, RichMenuBounds,
 project_folder = os.path.dirname(os.path.abspath(__file__))
 
 
-class helper:
+class richMenu:
     def __init__(self, line_bot_api):
         self.line_bot_api = line_bot_api
 
@@ -51,7 +51,7 @@ class helper:
         print("rich menu id:" + rich_menu_id)
 
         # upload image for menu
-        with open(os.path.join(os.path.join(os.path.join(project_folder, 'assets'), 'image'), 'rich_menu.png'),
+        with open(os.path.join(os.path.join(os.path.join(project_folder, '../assets'), 'image'), 'rich_menu.png'),
                   'rb') as f:
             self.line_bot_api.set_rich_menu_image(rich_menu_id, 'image/png', f)
         print("successfully upload image")
